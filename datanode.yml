@@ -1,0 +1,57 @@
+- hosts: all
+  vars:
+          path_of_hadoop_software: "/root/hadoop"
+          datanode_dir: "/dn2"
+  tasks:
+          - name: Hadoop software document root
+            file:
+               state: directory
+               path: "{{ path_of_hadoop_software }}"
+          
+          - name: Copying hadoop software
+            copy: 
+              src: "hadoop-1.2.1-1.x86_64.rpm"
+              dest: "{{ path_of_hadoop_software }}"
+          
+          - name: Copying jdk for hadoop software   
+            copy:
+               src: "jdk-8u171-linux-x64.rpm"
+               dest: "{{ path_of_hadoop_software }}"
+
+          - name: Installing JDK
+            yum:
+               name: "{{ path_of_hadoop_software }}/jdk-8u171-linux-x64.rpm"
+               state: present
+               disable_gpg_check: "yes"
+
+          - name: Installing Hadoop
+            shell: "rpm -i {{ path_of_hadoop_software }}/hadoop-1.2.1-1.x86_64.rpm --force"
+           
+          - name: Creating directry for datanode
+            file:
+               state: directory
+               path: "{{ datanode_dir }}"
+                  
+          - name: Copying hdfs-site.xml file
+            copy: 
+              src: "hdfs-site.xml"
+              dest: "/etc/hadoop"
+                     
+          - name: Copying core-site.xml
+            copy: 
+              src: "core-site.xml"
+              dest: "/etc/hadoop"
+                     
+          - name: Starting Datanode service
+            shell: "hadoop-daemon.sh start datanode"
+                   
+                       
+ 
+
+
+
+
+
+
+
+
